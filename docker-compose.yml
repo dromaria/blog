@@ -1,0 +1,38 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: _docker/app/Dockerfile
+        volumes:
+            - ./:/var/www
+        environment:
+            - 'DB_PORT=3306'
+            - 'DB_HOST=${DB_HOST}'
+        container_name: blog_app
+        depends_on:
+            - db
+
+    nginx:
+        image: nginx:latest
+        volumes:
+            - ./:/var/www/
+            - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+        ports:
+            - "8876:80"
+        container_name: blog_nginx
+        depends_on:
+            - app
+
+    db:
+        image: 'mysql/mysql-server:8.0'
+        restart: always
+        ports:
+            - 8889:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - ./tmp/db:/var/lib/mysql
+        container_name: db
