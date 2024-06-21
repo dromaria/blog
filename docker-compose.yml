@@ -5,9 +5,6 @@ services:
             dockerfile: _docker/app/Dockerfile
         volumes:
             - ./:/var/www
-        environment:
-            - 'DB_PORT=3306'
-            - 'DB_HOST=${DB_HOST}'
         container_name: blog_app
         depends_on:
             - db
